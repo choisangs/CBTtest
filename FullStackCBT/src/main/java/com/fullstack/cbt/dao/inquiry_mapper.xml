@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fullstack.cbt.dao.InquiryDAO">
+
+	
+
+
+	<insert id="write" 
+		useGeneratedKeys="true"
+		keyColumn="ib_idx"
+		keyProperty="ib_idx"
+		parameterType="com.fullstack.cbt.dto.InquiryDTO">
+		INSERT INTO cbt_inquiry_board(ib_subject, ib_content,mb_id,ib_status)
+			VALUES(#{ib_subject},#{ib_content},#{mb_id},'2')
+	</insert>
+
+	<insert id="fileWrite">
+		INSERT INTO cbt_inquiry_board_attach(ba_org_name, ba_new_name, ib_idx)
+			VALUES(#{param1},#{param2},#{param3})
+	</insert>
+	
+	<select id="inquiryDetail" parameterType="String" 
+		resultType="com.fullstack.cbt.dto.InquiryDTO">
+		SELECT * FROM cbt_inquiry_board WHERE ib_idx = #{ib_idx}
+	</select>
+	
+	<select id="photoList" parameterType="String"
+		resultType="com.fullstack.cbt.dto.InquiryAttachDTO">
+		SELECT * FROM cbt_inquiry_board_attach WHERE ib_idx = #{ib_idx}	
+	</select>
+	
+	<select id="photoList2" parameterType="String"
+		resultType="com.fullstack.cbt.dto.InquiryAttachDTO">
+		SELECT * FROM cbt_inquiry_board_attach WHERE ba_idx = #{ba_idx}	
+	</select>
+	
+	
+	<select id="adminInquiryDetail" parameterType="String" 
+		resultType="com.fullstack.cbt.dto.InquiryDTO">
+		SELECT * FROM cbt_inquiry_board WHERE ib_idx = #{ib_idx}
+	</select>
+	
+	<select id="adminPhotoList" parameterType="String"
+		resultType="com.fullstack.cbt.dto.InquiryAttachDTO">
+		SELECT * FROM cbt_inquiry_board_attach WHERE ib_idx = #{ib_idx}	
+	</select>
+
+	<delete id="del">
+		DELETE FROM cbt_inquiry_board WHERE ib_idx = #{ib_idx}
+	</delete>
+	
+	<delete id="del2">
+		DELETE FROM cbt_inquiry_board_attach WHERE ib_idx = #{ib_idx} 
+	</delete>
+
+	<delete id="del3">
+		DELETE FROM cbt_inquiry_board_attach WHERE ba_idx = #{ba_idx} 
+	</delete>
+ 	
+ 	<update id="update" parameterType="hashmap">
+	UPDATE cbt_inquiry_board SET ib_subject =#{ib_subject},ib_content =#{ib_content}
+	WHERE ib_idx =#{ib_idx}
+	</update>
+ 	
+ 	
+ 	<update id="adUpdate" parameterType="hashmap" >
+	UPDATE cbt_inquiry_board 
+	SET 
+		ib_memo = #{ib_memo}
+		
+		
+		<if test="ib_status == '2'.toString()">
+		,ib_admin_id = ''
+		,ib_answer = ''
+		,ib_answer_date='0000-00-00 00:00:00'
+		</if>
+
+		<if test="ib_status == '4'.toString() and ib_answer_date != null and ib_answer_date.equals('')">
+			,ib_answer_date=NOW()
+			,ib_answer=#{ib_answer}
+			,ib_admin_id = #{ib_admin_id}
+			,ib_status = #{ib_status}
+		</if>
+	
+	WHERE ib_idx =#{ib_idx} 
+	</update>
+	<!--  AND (ib_admin_id = '' or ib_admin_id = #{ib_admin_id})-->
+
+
+	
+	
+	
+	<!-- 1대1 게시판 검색 리스트 -->
+	<!-- 페이징검색 -->
+	
+		<select id="listPageCount" resultType="int">
+		<![CDATA[
+			SELECT COUNT(ib_idx) FROM cbt_inquiry_board WHERE ib_idx > 0 		
+		]]>
+		
+		<include refid="newSearchSql"></include>
+		</select>
+
+
+		<select id="inquirySearch" resultType="com.fullstack.cbt.dto.InquiryDTO">
+			<![CDATA[
+				SELECT ib_idx,ib_subject,ib_reg_date,ib_status FROM cbt_inquiry_board		
+				
+				WHERE ib_idx > 0
+			]]>
+			  
+			  <include refid="newSearchSql"></include>		
+			
+			ORDER BY ib_idx DESC limit #{pageStart}, #{perPageNum}
+		</select>
+	
+		<sql id="newSearchSql">
+		    <if test="ib_searchOption !=null">	    
+		            <if test="ib_searchOption == 'title'.toString()">
+		                AND ib_subject like CONCAT('%', #{ib_keyword}, '%')
+		            </if>
+		     
+		            <if test="ib_searchOption == 'content'.toString()">
+		                AND ib_content like CONCAT('%', #{ib_keyword}, '%')
+		            </if>
+		             
+		            <if test="ib_searchOption == 'all'.toString()">
+		                AND ( 
+		                   
+		                     ib_subject like CONCAT('%', #{ib_keyword}, '%')
+		                    OR
+		                     ib_content like CONCAT('%', #{ib_keyword}, '%')
+		                )
+		            </if>	             
+		    </if>
+		    
+		    <if test="ib_status!=null">
+		    	     <if test="ib_status == '2'.toString()">
+		                AND ib_status ='2'
+		            </if>
+		   
+		    	     <if test="ib_status == '4'.toString()">
+		                AND ib_status ='4'
+		            </if>	  	            	            	    
+		    </if>
+		    
+		</sql>
+	 
+
+
+
+	<!-- 1대1 게시판(관리자) 검색 리스트 -->
+		<select id="adInquirySearch" resultType="com.fullstack.cbt.dto.InquiryDTO">
+			<![CDATA[
+				SELECT ib_idx,ib_subject,mb_id,ib_reg_date,ib_status FROM cbt_inquiry_board		
+				WHERE ib_idx > 0
+			]]>
+	 		  <include refid="adSearchSql"></include>		
+			ORDER BY ib_idx DESC limit #{pageStart}, #{perPageNum}
+		</select>
+		
+		<select id="adListPageCount" resultType="int">
+			<![CDATA[
+				SELECT COUNT(ib_idx) FROM cbt_inquiry_board WHERE ib_idx > 0 		
+			]]>
+			
+			<include refid="adSearchSql"></include>
+		</select>
+
+		<sql id="adSearchSql">
+	    <if test="ib_searchOption !=null">	    
+	            <if test="ib_searchOption == 'title'.toString()">
+	                AND ib_subject like CONCAT('%', #{ib_keyword}, '%')
+	            </if>
+	     
+	            <if test="ib_searchOption == 'idid'.toString()">
+	                AND mb_id like CONCAT('%', #{ib_keyword}, '%')
+	            </if>
+	             
+	            <if test="ib_searchOption == 'all'.toString()">
+	                AND ( 
+	                   
+	                     ib_subject like CONCAT('%', #{ib_keyword}, '%')
+	                    OR
+	                     mb_id like CONCAT('%', #{ib_keyword}, '%')
+	                )
+	            </if>	             
+	    </if>
+	    
+	    <if test="ib_status!=null">
+	    	     <if test="ib_status == '2'.toString()">
+	                AND ib_status ='2' 
+	            </if>  
+	    	     <if test="ib_status == '4'.toString()">
+	                AND ib_status ='4'
+	            </if>	  	            	            	    
+	    </if>
+	    
+	</sql>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+</mapper>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fullstack.cbt.dao.ObjectionDAO">
+
+<select id="problemDto" resultType="com.fullstack.cbt.dto.ProblemDTO">
+	SELECT pc_idx, pc_problem, pc_answer, pc_answer1,pc_answer2,pc_answer3, pc_answer4
+	FROM cbt_problem_create WHERE pc_idx=#{param1}
+</select>
+
+
+<insert id="objectionInsert" >
+	INSERT INTO cbt_objection(oj_content,oj_date,oj_status,pc_idx,mb_id)
+	 VALUES(#{param1},now(),'처리대기',#{param2},#{param3})
+</insert>
+
+
+<!-- 이의제기 전체 리스트  -->
+<select id="objectionList" resultType="com.fullstack.cbt.dto.ObjectionDTO">	
+	SELECT co.mb_id, oj_date, oj_status, oj_content, oj_admin_id, oj_memo, oj_proc_date, pc_problem, oj_idx 
+		FROM cbt_objection co INNER JOIN cbt_problem_create cpc 
+	ON co.pc_idx = cpc.pc_idx
+</select>
+
+<!-- 이의제기 상세보기  -->
+<select id="objectionDetail" resultType="com.fullstack.cbt.dto.ObjectionDTO">
+	SELECT 
+		co.mb_id
+		,oj_date
+		,oj_status
+		,oj_content
+		,oj_admin_id
+		,oj_proc_date
+		,oj_memo
+		,oj_proc_date
+		,oj_idx
+		,pc_problem
+		,cpc.pc_idx
+		,co.pc_idx 	
+	FROM 
+		cbt_objection co 
+	INNER JOIN 
+		cbt_problem_create cpc 
+	ON oj_idx = #{oj_idx} AND co.pc_idx = cpc.pc_idx
+</select>
+
+<select id="status" resultType="com.fullstack.cbt.dto.ObjectionDTO">
+	SELECT 
+		DISTINCT oj_status
+	FROM 
+		cbt_objection
+</select>
+
+<!-- 이의제기 등록(수정)하기  -->
+<update id="objectionUpdate" parameterType="hashmap">
+	UPDATE cbt_objection 
+		SET
+			<if test="oj_status == '처리중'.toString()">
+				oj_admin_id = #{oj_admin_id}
+				,oj_status = #{oj_status}
+				,oj_memo = #{oj_memo}
+			</if>
+			<if test="oj_status == '처리완료'.toString()">
+				oj_status = #{oj_status}
+				,oj_memo = #{oj_memo}
+				,oj_admin_id = #{oj_admin_id}
+				,oj_proc_date = now()
+			</if>
+	WHERE oj_idx = #{oj_idx}			
+</update>
+
+<!-- 이의제기 셀렉트 리스트 -->
+<!-- <select id="objectionSelectList" resultType="com.fullstack.cbt.dto.ObjectionDTO">
+	SELECT co.mb_id, oj_date, oj_status, oj_content, oj_admin_id, oj_memo, oj_proc_date, pc_problem 
+		FROM cbt_objection co INNER JOIN cbt_problem_create cpc 
+	ON co.oj_idx = cpc.pc_idx AND oj_status = #{param1};
+</select> -->
+
+<!-- <select id="objectionSelectList" resultType="com.fullstack.cbt.dto.ObjectionDTO">
+	<![CDATA[
+		SELECT co.mb_id, oj_date, oj_status, oj_content, oj_admin_id, oj_memo, oj_proc_date, pc_problem, oj_idx 
+			FROM cbt_objection co INNER JOIN cbt_problem_create cpc 
+		ON co.pc_idx = cpc.pc_idx
+	]]>
+		<include refid="objectionSelectListSql"></include>
+	ORDER BY oj_idx 
+</select>
+	
+	<sql id="objectionSelectListSql">
+		<if test="param1 != null">
+			<if test="param1 == '처리상태'.toString()">
+			
+			</if>
+			<if test="param1 == '처리대기'.toString()">
+				and oj_status = '처리대기'
+			</if>
+			<if test="param1 == '처리중'.toString()">
+				and oj_status = '처리중'
+			</if>
+			<if test="param1 == '처리완료'.toString()">
+				and oj_status = '처리완료'
+			</if>	
+		</if>
+		
+		<if test="param2 != null">
+			<if test="param2 == 'problem'.toString()">
+                and pc_problem like CONCAT('%', #{param3}, '%')
+            </if>
+            <if test="param2 == 'userId'.toString()">
+                and co.mb_id like CONCAT('%', #{param3}, '%')
+            </if>
+            <if test="param2 == 'all'.toString()">
+                and (
+                	pc_problem like CONCAT('%', #{param3}, '%')
+                	OR
+                	co.mb_id like CONCAT('%', #{param3}, '%')
+                )
+            </if>	
+		</if>
+	</sql> -->
+	
+	<!-- 게시물 목록(페이징) -->
+    <select id="getListPaging" resultType="com.fullstack.cbt.dto.ObjectionDTO">
+        SELECT 
+        	oj_idx
+        	,co.mb_id
+        	,oj_date
+        	,oj_status
+        	,oj_content
+        	,oj_admin_id
+        	,oj_memo
+        	,oj_proc_date
+        	,pc_problem 
+			FROM 
+				cbt_objection co 
+			INNER JOIN 
+				cbt_problem_create cpc 
+			ON co.pc_idx = cpc.pc_idx
+			ORDER BY oj_idx desc 
+		LIMIT #{skip} , 10
+    </select>
+    
+    <!-- 게시물 총 개숫 -->
+    <select id="getTotal" resultType="int">
+        select count(oj_idx) from cbt_objection 
+    </select>
+    
+    <select id="selectedListPaging" resultType="com.fullstack.cbt.dto.ObjectionDTO">
+		SELECT
+			oj_idx
+        	,co.mb_id
+        	,oj_date
+        	,oj_status
+        	,oj_content
+        	,oj_admin_id
+        	,oj_memo
+        	,oj_proc_date
+        	,pc_problem 
+			FROM 
+				cbt_objection co 
+			INNER JOIN 
+				cbt_problem_create cpc
+			ON co.pc_idx = cpc.pc_idx
+			<include refid="selectedSql"></include>	 
+			ORDER BY oj_idx desc 
+		LIMIT #{param3} , 10
+	</select>
+    
+    <sql id="selectedSql">
+		<trim prefix="where" suffixOverrides="and">
+			<if test = "!param1.equals('')">
+				oj_status = #{param1} and
+			</if>
+		
+			<if test = "!param2.equals('')">
+				pc_problem LIKE CONCAT('%',#{param2}, '%') and 
+			</if>
+		</trim>
+	</sql>
+	
+	<select id="selectedTotal" resultType="int">
+		SELECT count(*)
+		FROM 
+			cbt_objection co 
+		INNER JOIN 
+			cbt_problem_create cpc
+		ON co.pc_idx = cpc.pc_idx  
+		<include refid="totalSql"></include>
+		ORDER BY oj_idx DESC
+	</select>
+
+	<sql id="totalSql">
+		<trim prefix="where" suffixOverrides="and">
+			<if test = "!param1.equals('')">
+				oj_status = #{param1} and
+			</if>		
+			<if test = "!param2.equals('')">
+				pc_problem LIKE CONCAT('%',#{param2}, '%') and 
+			</if>
+		</trim>
+	</sql>
+
+</mapper>

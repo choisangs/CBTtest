@@ -1,0 +1,385 @@
+@charset "UTF-8";
+
+* {
+    font-family:'Noto Sans KR',sans-serif;
+}
+
+html {
+	overflow-y:scroll;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+}
+
+table {
+	width:100%;
+	border:1px solid #787878;
+	border-collapse:collapse;
+}
+
+table tr th {
+	padding:10px;
+	border:1px solid #787878;
+	background-color:#efefef;
+}
+table tr td {
+	padding:10px;
+	border:1px solid #787878;
+}
+input[type="text"], input[type="password"], textarea {
+	padding:5px;
+	outline:none;
+	border-width:1px;
+	border-style:solid;
+}
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+	background-color:#fafafa;
+}
+input[type="submit"], button[type="submit"] {
+	padding:5px 10px;
+	font-size:12px;
+	outline:none;
+	border:none;
+	color:#fff;
+	background-color:#0000ff;
+}
+input[type="button"], button[type="button"] {
+	padding:5px 10px;
+	font-size:12px;
+	outline:none;
+	border:none;
+	color:#fff;
+	background-color:#333;
+}
+select {
+	padding:5px;
+	outline:none;
+	font-size:12px;
+}
+textarea {
+	width:100%;
+	height:100px;
+	resize:none;
+	overflow-y:scroll;
+}
+p > b{
+	color:#0000ff;
+}
+
+#wrap {
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+#wrap > nav {
+    float: left;
+    width: 20%;
+    max-width: 200px;
+}
+
+#wrap > #container {
+    float: left;
+    width: 80%;
+}
+
+#wrap > #container > aside {
+    text-align: right;
+}
+#wrap > #container > aside > span {
+    font-size:11px;
+    color:#c8c8c8;
+}
+
+#wrap > nav #logo {
+    margin: 0;
+    text-align: center;
+}
+
+#wrap > nav #logo > img {
+    max-width:120px;
+}
+
+ol#questionBox {
+	width:90%;
+}
+ol > li, .problem > span{
+	font-family:'Batangche';
+	font-size:15px;
+}
+.problem > em {
+	color:#ff0000;
+	font-size:18px;
+	font-style:none;
+}
+#timer {
+	margin-bottom:30px;
+	display:block;
+	text-align:center;
+	font-size:30px;
+	color:#ff0000;
+}
+
+ul.answer {margin-top: 0.6em; padding: 0; position: relative;}
+.answer li {margin: 0.4em 0; list-style: none; position: relative;}
+#questionBox > li:not(:first-of-type), #btnPrev {display: none;}
+
+.answer li > input[type="radio"],
+#choice > table > tbody > tr > td > input[type="checkbox"] {
+	width: 0px;
+	height: 0px;
+	overflow: hidden;
+}
+
+.answer li > input[type="radio"]:before,
+.answer li > input[type="radio"]:checked:before {
+	top: 0px;
+	border: 1px solid #000;
+}
+
+#choice > table > tbody > tr > td > input[type="checkbox"]:before,
+#choice > table > tbody > tr > td > input[type="checkbox"]:checked:before {
+	top: 16px;
+	left: 6px;
+	border: 1px solid #0000ff;
+}
+
+.answer li > input[type="radio"]:before,
+.answer li > input[type="radio"]:checked:before,
+#choice > table > tbody > tr > td > input[type="checkbox"]:before,
+#choice > table > tbody > tr > td > input[type="checkbox"]:checked:before {
+	position: absolute;
+	text-align: center;
+	cursor: pointer;
+	width: 1.2em;
+	height: 1.2em;
+	line-height: 1.2em;
+	border-radius: 50%;
+}
+
+#choice > table > tbody > tr > td > input[type="checkbox"]:before,
+#choice > table > tbody > tr > td > input[type="checkbox"]:checked:before {
+	color: #0000ff;
+	border: 1px solid #0000ff;
+}
+
+.answer li > input[type="radio"]:before,
+#choice > table > tbody > tr > td > input[type="checkbox"]:before {
+	content: attr(value);
+}
+
+.answer li > input[type="radio"]:checked:before {
+	color: #fff;
+	background-color: #000;
+}
+
+#choice > table > tbody > tr > td > input[type="checkbox"]:checked:before {
+	background-color: #0000ff;
+}
+
+.answer li > input[type="radio"]:checked:before,
+#choice > table > tbody > tr > td > input[type="checkbox"]:checked:before {
+	content: attr(value);
+}
+
+.answer li > input[type="radio"] + label {
+	position: absolute;
+	cursor: pointer;
+	top: -0.2em;
+	left: 2.4em;
+}
+
+.answer li > input[type="radio"]:checked + label {
+	color: #0000ff;
+}
+
+ol#questionBox > li {
+	list-style: none;
+}
+
+#answerBox {
+	position: fixed;
+	top: 7%;
+	right: 7%;
+}
+
+#answerBox > p {
+	margin: 0;
+	text-align: center;
+	font-size:18px;
+	background-color: #ececec;
+}
+
+#answerBox > #choice {
+	overflow-y: scroll;
+	width: 180px;
+	max-height: 180px;
+	border: 1px solid #000;
+}
+
+#noProblem {
+	position: fixed;
+	top: 1%;
+	right: 7%;
+	font-size:18px;
+}
+
+#noProblem > em {
+	color: #ff0000;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+#answerBox > #choice > table > thead > tr > th {
+	background-color: #c8c8c8;
+}
+
+#answerBox > #choice > table > tbody > tr > th {
+	height: 1.8em;
+}
+
+#answerBox > #choice > table > tbody > tr > td {
+	position: relative;
+	width: 1.2em;
+}
+
+#answerBox > #choice > table > tbody > tr > th > a {
+	color: #0000ff;
+	text-decoration: none;
+}
+
+#answerBox > #choice > table > tbody > tr > th > a:hover {
+	text-decoration: underline;
+}
+
+[type="button"], input[type="submit"] {cursor:pointer;}
+
+#login,
+#join,
+#findId,
+#findPw {margin:0px auto; max-width:1200px;}
+
+#login > h1,
+#join > h1,
+#findId > h1,
+#findPw > h1 {margin-top:180px; text-align:center;}
+
+#findPw > h4 {text-align:center;}
+
+#join > form > table {margin:0px auto; max-width:800px;}
+#login > form > table,
+#findId > form > table,
+#findPw > form > table {margin:0px auto; max-width:400px;}
+
+/* 페이징 CSS */
+.pageInfo{
+    list-style : none;
+    display: inline-block;
+    margin-top: 30px;
+  }
+.pageInfo li{
+    float: left;
+    font-size: 20px;
+    margin-left: 18px;
+    padding: 7px;
+    font-weight: 500;
+}
+a:link {color:black; text-decoration: none;}
+a:visited {color:black; text-decoration: none;}
+a:hover {color:black; text-decoration: underline;}
+
+.active{
+      background-color: #cdd5ec;
+}
+
+/* 페이징2 CSS */
+ .pageInfo_wrap{
+     margin-top: 30px;
+    text-align: left;
+ }
+  
+.pagination{
+  display: inline-block;
+ }
+.pagination a{
+	font-size:11px;
+  	color:black;
+  	float:left;
+  	padding:8px 16px;
+  	text-decoration: none;
+}
+
+/* 검색 부분 */
+.search_area{
+    display: inline-block;
+    margin-top: 30px;
+    margin-left: 260px;
+}
+.search_area input{
+    height: 30px;
+    width: 250px;
+}
+.search_area button{
+    width: 100px;
+    height: 36px;
+}
+
+.search_area select{
+	height: 35px;
+}
+
+.problem {
+	margin:10px 0;
+}
+.problem > span.tO,
+.problem > span.tX {
+	position:relative;
+}
+.problem > span.tO:after {
+	content:'○';
+	position:absolute;
+	font-size:30px;
+	font-weight:bold;
+	left:-10px;
+	top:-10px;
+	color:#0000ff;
+}
+.problem > span.tX:after {
+	content:'／';
+	position:absolute;
+	font-size:30px;
+	font-weight:bold;
+	left:-10px;
+	top:-15px;
+	color:#ff0000;
+}
+
+.answers {
+	padding-bottom:20px;
+}
+
+.explan {
+	margin-bottom:10px;
+	padding:10px;
+	border:1px dotted black;
+}
+
+#wrap > nav > ul {
+	list-style:none;
+}
+
+#wrap > nav > ul > li {
+	margin:5px;
+}
+#wrap > nav > #adminMenu {
+    margin: 0px 30px 0 30px;
+    padding:10px 0px 30px 10px;
+    background-color: #333;
+}
+#wrap > nav > #adminMenu a {
+    color:#ffff00;
+}
